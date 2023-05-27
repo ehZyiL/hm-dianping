@@ -4,12 +4,14 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hmdp.dto.Result;
 import com.hmdp.utils.SystemConstants;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Slf4j
@@ -49,15 +51,25 @@ public class UploadController {
         String suffix = StrUtil.subAfter(originalFilename, ".", true);
         // 生成目录
         String name = UUID.randomUUID().toString();
-        int hash = name.hashCode();
-        int d1 = hash & 0xF;
-        int d2 = (hash >> 4) & 0xF;
+
+
+//        int hash = name.hashCode();
+//        int d1 = hash & 0xF;
+//        int d2 = (hash >> 4) & 0xF;
+
+        Long userId = UserHolder.getUser().getId();
+
         // 判断目录是否存在
-        File dir = new File(SystemConstants.IMAGE_UPLOAD_DIR, StrUtil.format("/blogs/{}/{}", d1, d2));
+//        File dir = new File(SystemConstants.IMAGE_UPLOAD_DIR, StrUtil.format("/blogs/{}/{}", d1, d2));
+        File dir = new File(SystemConstants.IMAGE_UPLOAD_DIR, StrUtil.format("/blogs/{}/{}", LocalDate.now(), userId));
+
         if (!dir.exists()) {
             dir.mkdirs();
         }
         // 生成文件名
-        return StrUtil.format("/blogs/{}/{}/{}.{}", d1, d2, name, suffix);
+//        log.info(" 生成文件名:/blogs/{}/{}/{}.{}", d1, d2, name, suffix);
+//        return StrUtil.format("/blogs/{}/{}/{}.{}", d1, d2, name, suffix);
+        return StrUtil.format("/blogs/{}/{}/{}.{}", LocalDate.now(), userId, name, suffix);
+
     }
 }
